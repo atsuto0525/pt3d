@@ -14,7 +14,7 @@ o3d.visualization.draw_geometries([pcd],
                                   top=30)
 
 print("->正在体素下采样...")
-voxel_size = 0.7
+voxel_size = 0.6
 downpcd = pcd.voxel_down_sample(voxel_size)
 print(downpcd)
 
