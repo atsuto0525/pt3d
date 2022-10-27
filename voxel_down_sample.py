@@ -23,8 +23,7 @@ o3d.visualization.draw_geometries([downpcd],
                                   window_name="downsampled pointcloud",
                                   width = 800,
                                   height = 800,
-                                  left = 30,
-                                  top = 30)
+                                  left = 30)
 
 
 print("->正在保存点云")
