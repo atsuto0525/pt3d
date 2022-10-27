@@ -1,7 +1,7 @@
 import open3d as o3d
 
 print("->正在加载点云... ")
-pcd = o3d.io.read_point_cloud("table_scene_lms400.pcd")
+pcd = o3d.io.read_point_cloud("dataset/table_scene_lms400.pcd")
 print(pcd)
 
 # 法线估计

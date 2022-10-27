@@ -3,7 +3,7 @@ import numpy as np
 
 # --------------------------- 加载点云 ---------------------------
 print("->正在加载点云... ")
-pcd = o3d.io.read_point_cloud("table_scene_lms400.pcd")
+pcd = o3d.io.read_point_cloud("dataset/table_scene_lms400.pcd")
 print("原始点云：", pcd)
 # ==============================================================
 
