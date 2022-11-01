@@ -5,6 +5,10 @@ import numpy as np
 print("->正在加载点云... ")
 pcd = o3d.io.read_point_cloud("dataset/table_scene_lms400.pcd")
 print("原始点云：", pcd)
+o3d.visualization.draw_geometries([pcd],
+                                  window_name="original point cloud",
+                                  width=1080,
+                                  height=720)
 # ==============================================================
 
 # ------------------------- Ball pivoting --------------------------
