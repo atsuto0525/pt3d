@@ -1,25 +1,36 @@
 # ----------------------------------------------------------------------------
 """Align multiple pieces of geometry in a global space"""
 
-import open3d as o3d
 import numpy as np
+import open3d as o3d
+import datetime
 
 
 def load_point_clouds(voxel_size=0.0):
-    pcd_data = o3d.data.DemoICPPointClouds()
     pcds = []
-    for i in range(3):
-        pcd = o3d.io.read_point_cloud(pcd_data.paths[i])
+    demo_icp_pcds = o3d.data.DemoICPPointClouds()
+    for path in demo_icp_pcds.paths:
+        pcd = o3d.io.read_point_cloud(path)
         pcd_down = pcd.voxel_down_sample(voxel_size=voxel_size)
         pcds.append(pcd_down)
     return pcds
 
 
-def pairwise_registration(source, target, max_correspondence_distance_coarse,
-                          max_correspondence_distance_fine):
+voxel_size = 0.02
+pcds_down = load_point_clouds(voxel_size)
+o3d.visualization.draw_geometries(pcds_down,
+                                  zoom=0.3412,
+                                  front=[0.4257, -0.2125, -0.8795],
+                                  lookat=[2.6172, 2.0475, 1.532],
+                                  up=[-0.0694, -0.9768, 0.2024])
+
+
+def pairwise_registration(source, target, max_correspondence_distance_coarse=None,
+                          max_correspondence_distance_fine=None):
     print("Apply point-to-plane ICP")
     icp_coarse = o3d.pipelines.registration.registration_icp(
-        source, target, max_correspondence_distance_coarse, np.identity(4),
+        source, target, max_correspondence_distance_coarse,
+        np.identity(4),
         o3d.pipelines.registration.TransformationEstimationPointToPlane())
     icp_fine = o3d.pipelines.registration.registration_icp(
         source, target, max_correspondence_distance_fine,
@@ -97,4 +108,24 @@ if __name__ == "__main__":
     for point_id in range(len(pcds_down)):
         print(pose_graph.nodes[point_id].pose)
         pcds_down[point_id].transform(pose_graph.nodes[point_id].pose)
-    o3d.visualization.draw(pcds_down)
+    o3d.visualization.draw_geometries(pcds_down,
+                                      zoom=0.3412,
+                                      front=[0.4257, -0.2125, -0.8795],
+                                      lookat=[2.6172, 2.0475, 1.532],
+                                      up=[-0.0694, -0.9768, 0.2024]
+                                      )
+
+    nowTime = datetime.datetime.now().strftime('%Y-%M-%D-%H-$M-%S')
+    pcds = load_point_clouds(voxel_size)
+    pcd_combined = o3d.geometry.PointCloud()
+    for point_id in range(len(pcds)):
+        pcds[point_id].transform(pose_graph.nodes[point_id].pose)
+        pcd_combined += pcds[point_id]
+    pcd_combined_down = pcd_combined.voxel_down_sample(voxel_size=voxel_size)
+    o3d.io.write_point_cloud("/home/jiangbin/pt3d/pt_output/multiway_registration.pcd",
+                             pcd_combined_down)
+    o3d.visualization.draw_geometries([pcd_combined_down],
+                                      zoom=0.3412,
+                                      front=[0.4257, -0.2125, -0.8795],
+                                      lookat=[2.6172, 2.0475, 1.532],
+                                      up=[-0.0694, -0.9768, 0.2024])
